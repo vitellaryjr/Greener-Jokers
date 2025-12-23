@@ -62,7 +62,7 @@ SMODS.Back {
         name = 'Birthday Deck',
         text = {
             '{C:attention}+#1#{} voucher slot',
-           
+
 
 
         }
@@ -73,8 +73,7 @@ SMODS.Back {
     loc_vars = function(self, info_queue, back)
         return {
             vars = { self.config.extra.voucherslots }
-            }
-        
+        }
     end,
     apply = function(self, back)
         SMODS.change_voucher_limit(self.config.extra.voucherslots)
@@ -299,4 +298,98 @@ SMODS.Back {
         -- third line of code for orchid and bosssauce
     end,
 
+}
+
+SMODS.Back {
+    key = "neon",
+    loc_txt = {
+        name = 'Neon Deck',
+        text = {
+            '{C:green}#1# in #2#{} cards get',
+            'drawn face down',
+            '{C:attention}+#3#{} hand size'
+
+
+
+        }
+    },
+    pos = { x = 0, y = 1 },
+    atlas = 'ZucchinisVariousDecks',
+    config = { hand_size = 1, extra = { numerator = 1, denominator = 8, } },
+    loc_vars = function(self, info_queue, back)
+        local numerator, denominator = SMODS.get_probability_vars(self, self.config.extra.numerator,
+            self.config.extra.denominator, 'znm_neondeck') -- it is suggested to use an identifier so that effects that modify probabilities can target specific values
+        return { vars = { numerator, denominator, self.config.hand_size } }
+    end,
+    calculate = function(self, card, context)
+        if context.stay_flipped and context.to_area == G.hand and
+            SMODS.pseudorandom_probability(self, 'znm_neondeck', self.config.extra.numerator, self.config.extra.denominator) then
+            return {
+                stay_flipped = true
+            }
+        end
+    end,
+
+}
+
+SMODS.Back {
+    key = "life",
+    loc_txt = {
+        name = 'Deck of Life',
+        text = {
+            '{C:attention}Convert{} a random card',
+            'in your {C:attention}full deck{} into another',
+            'random card in your {C:attention}full deck{}',
+            '{C:attention{}twice{} at end of round'
+
+
+
+        }
+    },
+    pos = { x = 1, y = 1 },
+    atlas = 'ZucchinisVariousDecks',
+    config = {},
+    calculate = function(self, card, context)
+        if context.end_of_round and context.game_over == false and context.main_eval then
+            for i = 1, 2 do
+                if #G.playing_cards > 1 then
+                    local znm_convertlist = {}
+                    local znm_convert1 = {}
+                    local znm_convert2 = {}
+                    for i = 1, #G.playing_cards do
+                        znm_convertlist[#znm_convertlist + 1] =
+                            G.playing_cards[i]
+                    end
+                    znm_convert1 = pseudorandom_element(znm_convertlist, pseudoseed('znm_deckoflife'))
+                    table.remove(znm_convertlist, #znm_convert1)
+                    znm_convert2 = pseudorandom_element(znm_convertlist, pseudoseed('znm_deckoflife2'))
+                    copy_card(znm_convert1, znm_convert2)
+                end
+            end
+        end
+    end,
+
+}
+
+SMODS.Back {
+    key = "temple",
+    loc_txt = {
+        name = 'Temple Deck',
+        text = {
+            'Start run with {C:attention,T:v_clearance_sale}#1#{}',
+            'and {C:attention,T:v_liquidation}#2#{},',
+            '{C:red}#3#{} joker slot',
+
+        }
+    },
+    pos = { x = 2, y = 1 },
+    atlas = 'ZucchinisVariousDecks',
+    config = { vouchers = { 'v_clearance_sale', 'v_liquidation' }, joker_slot = -1 },
+    loc_vars = function(self, info_queue, back)
+        return {
+            vars = { localize { type = 'name_text', key = self.config.vouchers[1], set = 'Voucher' },
+                localize { type = 'name_text', key = self.config.vouchers[2], set = 'Voucher' }, self.config.joker_slot
+            }
+        }
+    end,
 }
