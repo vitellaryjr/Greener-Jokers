@@ -1528,7 +1528,7 @@ SMODS.Joker {
 	-- This card's position on the atlas, starting at {x=0,y=0} for the very top left.
 	pos = { x = 2, y = 0 },
 	-- Cost of card in shop.
-	cost = 5,
+	cost = 6,
 	-- put all variables in here
 	config = { extra = { mult = 0, mult_gain = 3 } },
 
@@ -2788,18 +2788,18 @@ SMODS.Joker {
 			local seal = SMODS.poll_seal({ key = "seed", guaranteed = true })
 			if other_card:is_face() and not other_card.seal and not other_card.debuff and SMODS.pseudorandom_probability(card, 'znm_walkoffame', card.ability.extra.numerator, card.ability.extra.denominator, 'znm_walkoffame') then
 				G.E_MANAGER:add_event(Event({
-			
 
-					
+
+
 					trigger = 'before',
 					delay = 0.4,
 					card:juice_up(),
-							func = function()
-					other_card:set_seal(seal, false, true)
-					card_eval_status_text(other_card, 'extra', nil, nil, nil,
-						{ message = 'Famous!', colour = G.C.SPECTRAL, instant = true })
-								return true
-						end
+					func = function()
+						other_card:set_seal(seal, false, true)
+						card_eval_status_text(other_card, 'extra', nil, nil, nil,
+							{ message = 'Famous!', colour = G.C.SPECTRAL, instant = true })
+						return true
+					end
 				}))
 			end
 		end
@@ -3726,14 +3726,7 @@ SMODS.Joker {
 	calculate = function(self, card, context)
 		if context.before and context.main_eval and #context.full_hand == 1 and not context.blueprint and context.full_hand[1]:get_id() == G.GAME.current_round.znm_ouijaboard_card.id and
 			context.full_hand[1]:is_suit(G.GAME.current_round.znm_ouijaboard_card.suit) then
-			G.E_MANAGER:add_event(Event({
-				trigger = 'before',
-				delay = 0.1,
-				func = function()
-					context.full_hand[1]:set_seal('Purple', nil, true)
-					return true
-				end
-			}))
+			context.full_hand[1]:set_seal('Purple', nil, true)
 		end
 	end
 }
@@ -4208,14 +4201,15 @@ SMODS.Joker {
 	loc_txt = {
 		name = 'High Striker',
 		text = {
-			'{X:mult,C:white}X#2#{} Mult per',
-			'{C:attention}Straight Flush{} played this run',
-			'{C:inactive}(Currently {X:mult,C:white}X#3# {C:inactive} Mult){}',
-			'{C:green,s:0.8}Art by Worldwaker2{}'
+			'{X:mult,C:white}X#1#{} Mult if',
+			'{C:attention}Straight Flush{} has been played',
+			'{C:attention}3{} or more times this run',
+			'{C:inactive}(Currently {C:attention}#2#{}{C:inactive}){}',
+			'{C:green,s:0.8}Art by Worldwaker2{}',
 
 		}
 	},
-	rarity = 2,
+	rarity = 3,
 
 	-- Which atlas key to pull from.
 	atlas = 'ZucchinisVariousJokers',
@@ -4224,29 +4218,30 @@ SMODS.Joker {
 	-- Cost of card in shop.
 	cost = 8,
 	-- put all variables in here
-	config = { extra = { Xmult = 1, Xmult_gain = 0.75 } },
+	config = { extra = { Xmult = 3, } },
 
 	loc_vars = function(self, info_queue, card)
+		local striker_tally = 0
+		if G.GAME.hands['Straight Flush'].played then
+			striker_tally = G.GAME.hands['Straight Flush'].played
+		end
+
 		return {
-			vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain, card.ability.extra.Xmult_gain * (G.GAME.hands['Straight Flush'].played or 0) + 1 }
+			vars = { card.ability.extra.Xmult , striker_tally}
 		}
 	end,
 
 
 	calculate = function(self, card, context)
-		if context.before and next(context.poker_hands['Straight Flush']) then
-			return {
-				message = localize('k_upgrade_ex'),
-				colour = G.C.RED
-			}
-		end
-
 		if context.joker_main then
-			return {
-				Xmult = card.ability.extra.Xmult_gain * (G.GAME.hands['Straight Flush'].played or 0) + 1
-			}
+			if (G.GAME.hands['Straight Flush'].played) >= 3 then
+				return {
+					Xmult = card.ability.extra.Xmult
+				}
+			end
 		end
 	end
+
 }
 
 
@@ -5252,7 +5247,7 @@ SMODS.Joker {
 	blueprint_compat = true,
 	eternal_compat = true,
 	perishable_compat = false,
-	
+
 	-- loc text is the in game description
 	loc_txt = {
 		name = 'Musical Chairs',
@@ -5403,7 +5398,7 @@ SMODS.Joker {
 	blueprint_compat = true,
 	eternal_compat = true,
 	perishable_compat = false,
-	
+
 
 	-- loc text is the in game description
 	loc_txt = {
