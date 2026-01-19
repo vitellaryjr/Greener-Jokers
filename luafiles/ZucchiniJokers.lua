@@ -236,7 +236,7 @@ SMODS.Joker {
 	-- This card's position on the atlas, starting at {x=0,y=0} for the very top left.
 	pos = { x = 7, y = 1 },
 	-- Cost of card in shop.
-	cost = 6,
+	cost = 4,
 	-- free rerolls! do not worry about it
 	add_to_deck = function(self, card, from_debuff)
 		SMODS.change_free_rerolls(card.ability.extra.rerolls)
@@ -938,7 +938,7 @@ SMODS.Joker {
 		text = {
 			'{C:attention}+#1#{} Joker slots',
 			'Disappears in {C:attention}3{} rounds',
-			'{C:inactive}({C:attention}#2#{C:inactive} #3# remaining){}',
+			'{C:inactive}({C:attention}#2#{C:inactive} remaining){}',
 			'{C:green,s:0.8}Art & Concept by tobyaaa{}'
 		}
 	},
@@ -1286,7 +1286,7 @@ SMODS.Joker {
 	-- This card's position on the atlas, starting at {x=0,y=0} for the very top left.
 	pos = { x = 4, y = 2 },
 	-- Cost of card in shop.
-	cost = 6,
+	cost = 5,
 	-- put all variables in here
 	config = { extra = {} },
 	loc_vars = function(self, info_queue, card)
@@ -1439,14 +1439,14 @@ SMODS.Joker {
 
 		}
 	},
-	rarity = 2,
+	rarity = 1,
 
 	-- Which atlas key to pull from.
 	atlas = 'ZucchinisVariousJokers',
 	-- This card's position on the atlas, starting at {x=0,y=0} for the very top left.
 	pos = { x = 6, y = 2 },
 	-- Cost of card in shop.
-	cost = 7,
+	cost = 5,
 	-- put all variables in here
 	config = { extra = { mult = 10 } },
 	loc_vars = function(self, info_queue, card)
@@ -1798,7 +1798,8 @@ SMODS.Joker {
 		name = 'Bug Cave',
 		text = {
 			'{X:mult,C:white}X#1#{} Mult',
-			'If played hand is a {C:attention}#2#{}, {C:attention}#3#{}, or {C:attention}#5#{},',
+			'If played hand does not contain a', 
+			'{C:attention}#2#{}, or {C:attention}#3#{},',
 			'hand will {C:red}not{} score'
 
 
@@ -1813,17 +1814,17 @@ SMODS.Joker {
 	-- Cost of card in shop.
 	cost = 7,
 	-- put all variables in here
-	config = { extra = { Xmult = 2.5, znm_poker_hand1 = 'High Card', znm_poker_hand2 = 'Pair', mult = 0, znm_poker_hand3 = "Two Pair" } },
+	config = { extra = { Xmult = 2.5, znm_poker_hand1 = 'Three of a Kind', znm_poker_hand2 = 'Straight', } },
 
 	loc_vars = function(self, info_queue, card)
-		return { vars = { card.ability.extra.Xmult, localize(card.ability.extra.znm_poker_hand1, 'poker_hands'), localize(card.ability.extra.znm_poker_hand2, 'poker_hands'), card.ability.extra.multx, localize(card.ability.extra.znm_poker_hand3, 'poker_hands') } }
+		return { vars = { card.ability.extra.Xmult, localize(card.ability.extra.znm_poker_hand1, 'poker_hands'), localize(card.ability.extra.znm_poker_hand2, 'poker_hands'),  } }
 	end,
 
 
 
 	calculate = function(self, card, context)
 		if context.debuff_hand then
-			if context.scoring_name == card.ability.extra.znm_poker_hand1 or context.scoring_name == card.ability.extra.znm_poker_hand2 or context.scoring_name == card.ability.extra.znm_poker_hand3 then
+			if not next(context.poker_hands[card.ability.extra.znm_poker_hand1]) and not next(context.poker_hands[card.ability.extra.znm_poker_hand2]) then
 				return {
 					debuff = true,
 				}
@@ -2219,7 +2220,7 @@ SMODS.Joker {
 	-- Cost of card in shop.
 	cost = 6,
 	-- put all variables in here
-	config = { extra = { chips = 40, mult = 7, odds = 2 } },
+	config = { extra = { chips = 40, mult = 6, odds = 2 } },
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.chips, card.ability.extra.mult } }
 	end,
@@ -2899,7 +2900,7 @@ SMODS.Joker {
 			'Cards in poker hand are either',
 			'{C:attention}duplicated{} into your {C:attention}hand{} or {C:attention}destroyed{},',
 			'chosen at {C:attention}random{}, lasts {C:attention}#3#{} rounds',
-			'{C:inactive}({C:attention}#1#{C:inactive} rounds remaining){}',
+			'{C:inactive}({C:attention}#1#{C:inactive} remaining){}',
 
 		}
 	},
@@ -3676,7 +3677,7 @@ local function reset_znm_combinationlock_num()
 	local nums = { 2, 3, 4, 5, 6, 7, 8, 9, 10 }
 	G.GAME.current_round.znm_combinationlocknumA = pseudorandom_element(nums,
 		pseudoseed('znm_combinationlockA' .. G.GAME.round_resets.ante))
-	table.remove(nums, G.GAME.current_round.znm_combinationlocknumA)
+	table.remove(nums, G.GAME.current_round.znm_combinationlocknumA - 1)
 	G.GAME.current_round.znm_combinationlocknumB = pseudorandom_element(nums,
 		pseudoseed('znm_combinationlockB' .. G.GAME.round_resets.ante))
 	if G.GAME.current_round.znm_combinationlocknumA > G.GAME.current_round.znm_combinationlocknumB then
@@ -3940,6 +3941,8 @@ SMODS.Joker {
 			'When {C:attention}Blind{} is selected',
 			'add {C:dark_edition}Polychrome{} to a random {C:attention}Joker{} and',
 			'debuff that {C:attention}Joker{} for this round',
+			'Disappears in {C:attention}#1#{} rounds',
+			'{C:inactive}({C:attention}#2#{C:inactive} remaining){}',
 
 		}
 	},
@@ -3959,6 +3962,9 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.rounds, card.ability.extra.rounds_remaining } }
 	end,
 
+	pools = {
+		Food = true
+	},
 
 
 	calculate = function(self, card, context)
@@ -4000,7 +4006,7 @@ SMODS.Joker {
 
 
 		-- destroy after 3 rounds
-		--[[
+		
 		if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
 			card.ability.extra.rounds_remaining = card.ability.extra.rounds_remaining - 1
 
@@ -4038,7 +4044,7 @@ SMODS.Joker {
 				colour = G.C.EDITION
 			}
 		end
-		]] --
+		
 	end
 }
 

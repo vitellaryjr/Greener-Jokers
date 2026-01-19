@@ -1,3 +1,14 @@
+1.3.2
+
+Changes:
+Coin on a String is 4 dollars instead of 6 idk why it was 4 dollars
+Pinhead is common and 5 dollars now, it was never really that strong and now it has the common niche where it CAN lead to good synergies and I fw that, sorta like swashbuckler
+Mayhem Joker is nerfed a bit
+Bug Cave now has the same criteria as Candle, since it was kinda just free xmult before
+Bulldozer is a dollar cheaper
+Joker Potion now lasts 3 rounds again, its main function is unchanged but now it's back to being a food joker
+Fixed a weird bug with Combination Lock
+
 1.3.1
 
 Changes:

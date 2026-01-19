@@ -34,6 +34,7 @@ SMODS.Back {
         }
     },
     pos = { x = 1, y = 0 },
+
     atlas = 'ZucchinisVariousDecks',
     config = { vouchers = { 'v_overstock_norm', 'v_magic_trick', 'v_illusion' }, playing_card_rate = 10, znm_card_rate_bool = false },
     loc_vars = function(self, info_queue, back)
