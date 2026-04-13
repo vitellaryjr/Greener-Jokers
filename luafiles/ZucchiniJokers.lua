@@ -63,6 +63,9 @@ SMODS.Joker {
 	-- Sets rarity. 1 common, 2 uncommon, 3 rare, 4 legendary.
 	rarity = 1,
 
+	-- attributes define the characteristics of the joker and what it's related to
+	attributes = { 'chips', 'sell_value', 'scaling' },
+
 	-- Which atlas key to pull from.
 	atlas = 'ZucchinisVariousJokers',
 	-- This card's position on the atlas, starting at {x=0,y=0} for the very top left.
@@ -116,6 +119,8 @@ SMODS.Joker {
 	end,
 
 	rarity = 3,
+
+	attributes = { 'hand_size', 'chance', 'hand_type' },
 
 
 	atlas = 'ZucchinisVariousJokers',
@@ -178,6 +183,8 @@ SMODS.Joker {
 	-- Cost of card in shop.
 	cost = 5,
 
+	attributes = { 'chips', 'scaling', 'tarot', 'boss_blind' },
+
 	calculate = function(self, card, context)
 		-- function that adds chips
 		if context.using_consumeable and not context.blueprint and context.consumeable.ability.set == 'Tarot' and G.GAME.blind.in_blind then
@@ -230,6 +237,8 @@ SMODS.Joker {
 	end,
 	-- Sets rarity. 1 common, 2 uncommon, 3 rare, 4 legendary.
 	rarity = 2,
+
+	attributes = { 'reroll', 'passive', 'economy', 'chance' },
 
 	-- Which atlas key to pull from.
 	atlas = 'ZucchinisVariousJokers',
@@ -309,6 +318,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.size } }
 	end,
 
+	attributes = { 'retrigger' },
+
 	-- checks if the player has not played a 5 card hand, like half joker
 	calculate = function(self, card, context)
 		if context.repetition and context.cardarea == G.play and #context.full_hand <= card.ability.extra.size then
@@ -354,6 +365,9 @@ SMODS.Joker {
 			card.ability.extra.denominator, 'znm_plasticbag') -- it is suggested to use an identifier so that effects that modify probabilities can target specific values
 		return { vars = { card.ability.extra.mult, numerator, denominator, } }
 	end,
+
+	attributes = { 'mult', 'chance' },
+
 	-- this code allows it to actually turn eternal while not allowing it to appear naturally eternal
 
 
@@ -427,6 +441,9 @@ SMODS.Joker {
 			card.ability.extra.denominator, 'znm_landlord') -- it is suggested to use an identifier so that effects that modify probabilities can target specific values
 		return { vars = { card.ability.extra.chips, numerator, denominator, } }
 	end,
+
+	attributes = { 'chips', 'chance' },
+
 	calculate = function(self, card, context)
 		-- chips
 		if context.joker_main then
@@ -507,6 +524,8 @@ SMODS.Joker {
 		return
 	end,
 
+	attributes = { 'hands', 'enhancements' },
+
 
 
 	calculate = function(self, card, context)
@@ -553,6 +572,8 @@ SMODS.Joker {
 		info_queue[#info_queue + 1] = G.P_CENTERS.m_gold
 		return { vars = { card.ability.extra.mult, card.ability.extra.mult_gain } }
 	end,
+
+	attributes = { 'mult', 'scaling', 'enhancements' },
 
 	-- makes it gated behind having a gold card
 
@@ -620,6 +641,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
 	end,
 
+	attributes = { 'xmult', 'scaling', 'hand_type', 'reset' },
+
 	-- mult
 	calculate = function(self, card, context)
 		if context.joker_main then
@@ -675,6 +698,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.dollars } }
 	end,
+
+	attributes = { 'economy' },
 
 
 	calculate = function(self, card, context)
@@ -737,6 +762,8 @@ SMODS.Joker {
 	pos = { x = 6, y = 1 },
 	-- Cost of card in shop.
 	cost = 7,
+
+	attributes = { 'reroll', 'destroy_card' },
 
 
 	calculate = function(self, card, context)
@@ -816,6 +843,8 @@ SMODS.Joker {
 	pos = { x = 2, y = 1 },
 	-- Cost of card in shop.
 	cost = 6,
+
+	attributes = { 'mult', 'scaling' },
 
 
 	calculate = function(self, card, context)
@@ -901,6 +930,8 @@ SMODS.Joker {
 	-- Cost of card in shop.
 	cost = 9,
 
+	attributes = { 'on_sell', 'modify_card', 'rank', 'suit', 'full_deck' },
+
 
 	calculate = function(self, card, context)
 		if context.selling_self then
@@ -968,6 +999,9 @@ SMODS.Joker {
 	pools = {
 		Food = true
 	},
+
+	attributes = { 'joker_slot', 'food' },
+
 	-- gives and takes joker slots when card is added and removed
 	add_to_deck = function(self, card, from_debuff)
 		G.jokers.config.card_limit = G.jokers.config.card_limit + card.ability.extra.slots
@@ -1053,6 +1087,9 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.booster_packs } }
 	end,
+
+	attributes = { 'reroll' },
+
 	-- gives and takes shop slots
 
 	calculate = function(self, card, context)
@@ -1121,6 +1158,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult } }
 	end,
 
+	attributes = { 'mult' },
+
 
 	calculate = function(self, card, context)
 		local step_ladder_mult = false
@@ -1180,6 +1219,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.chips, localize(G.GAME.sackboy_hand or "High Card", 'poker_hands') } }
 	end,
+
+	attributes = { 'chips', 'hand_type' },
 
 
 	calculate = function(self, card, context)
@@ -1293,6 +1334,7 @@ SMODS.Joker {
 		return { vars = {} }
 	end,
 
+	attributes = { 'discard' },
 
 }
 
@@ -1329,6 +1371,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.mult, card.ability.extra.mult_gain } }
 	end,
+
+	attributes = { 'mult', 'scaling', 'reset', 'face', 'discard' },
 
 
 	calculate = function(self, card, context)
@@ -1384,6 +1428,8 @@ SMODS.Joker {
 		info_queue[#info_queue + 1] = G.P_CENTERS.m_wild
 		return { vars = {} }
 	end,
+
+	attributes = { 'rank', 'eight', 'modify_card', 'enhancements' },
 
 
 	calculate = function(self, card, context)
@@ -1452,6 +1498,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.mult } }
 	end,
+
+	attributes = { 'mult', 'rank', 'ten', 'five', 'discard' },
 
 
 	calculate = function(self, card, context)
@@ -1536,6 +1584,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult, card.ability.extra.mult_gain } }
 	end,
 
+	attributes = { 'mult', 'scaling' },
+
 
 	calculate = function(self, card, context)
 		if context.setting_blind and to_big(G.GAME.dollars) < to_big(G.GAME.interest_cap) and not context.blueprint then
@@ -1589,6 +1639,8 @@ SMODS.Joker {
 			card.ability.extra.denominator, 'znm_bluemoon') -- it is suggested to use an identifier so that effects that modify probabilities can target specific values
 		return { vars = { numerator, denominator, } }
 	end,
+
+	attributes = { 'generation', 'tarot', 'planet', 'chance' },
 
 
 	calculate = function(self, card, context)
@@ -1650,6 +1702,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.Xmult, localize(card.ability.extra.candle_hand, 'poker_hands'), card.ability.extra.Xmult_gain, localize(card.ability.extra.candle_hand2, 'poker_hands') } }
 	end,
+
+	attributes = { 'xmult', 'scaling', 'hand_type', 'discard' },
 
 
 	calculate = function(self, card, context)
@@ -1717,6 +1771,8 @@ SMODS.Joker {
 	pools = {
 		Food = true
 	},
+
+	attributes = { 'passive', 'food' },
 
 	add_to_deck = function(self, card, from_debuff)
 		G.E_MANAGER:add_event(Event({
@@ -1820,6 +1876,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.Xmult, localize(card.ability.extra.znm_poker_hand1, 'poker_hands'), localize(card.ability.extra.znm_poker_hand2, 'poker_hands'),  } }
 	end,
 
+	attributes = { 'xmult', 'hand_type' },
+
 
 
 	calculate = function(self, card, context)
@@ -1875,6 +1933,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = {} }
 	end,
+
+	attributes = { 'generation', 'spectral', 'hands' },
 
 	calculate = function(self, card, context)
 		if context.before and context.main_eval and G.GAME.current_round.hands_left == 0 and
@@ -1940,6 +2000,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult, localize(card.ability.extra.type, 'poker_hands') } }
 	end,
 
+	attributes = { 'mult', 'modify_card', 'perma_bonus', 'hand_type' },
+
 	-- looks at if hand contains a straight, does some hiker magic
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play and next(context.poker_hands[card.ability.extra.type]) then
@@ -1983,6 +2045,8 @@ SMODS.Joker {
 	cost = 5,
 	-- put all variables in here
 	config = { extra = { numerator = 1, denominator = 3 } },
+
+	attributes = { 'generation', 'joker', 'rank', 'three' },
 
 	loc_vars = function(self, info_queue, card)
 		local numerator, denominator = SMODS.get_probability_vars(card, card.ability.extra.numerator,
@@ -2056,6 +2120,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult, card.ability.extra.sj_rounds } }
 	end,
 
+	attributes = { 'mult', 'modify_card', 'perma_bonus', 'on_sell', 'food' },
+
 
 	calculate = function(self, card, context)
 		-- invisible joker esque code that gives text for 1 round left, and destroys itself alongside text at 0
@@ -2116,6 +2182,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.repetitions, localize((G.GAME.current_round.znm_brokenrecord_rank or {}).rank or 'Ace', 'ranks') } }
 	end,
 
+	attributes = { 'retrigger', 'rank' },
+
 	-- checks if the player played the correct rank, and then retriggers the cards
 	calculate = function(self, card, context)
 		if context.repetition and context.cardarea == G.play then
@@ -2175,6 +2243,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.Xmult, card.ability.extra.dollars } }
 	end,
 
+	attributes = { 'xmult', 'enhancements' },
+
 	in_pool = function(self, args)
 		if G.deck and G.deck.cards then
 			for j = 1, #G.deck.cards do
@@ -2224,6 +2294,7 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.chips, card.ability.extra.mult } }
 	end,
+	attributes = { 'mult', 'chips', 'rank', 'nine', 'ace', 'four' },
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play and
 			(context.other_card:get_id() == 9 or context.other_card:get_id() == 14 or context.other_card:get_id() == 4) then
@@ -2278,6 +2349,7 @@ SMODS.Joker {
 		info_queue[#info_queue + 1] = G.P_CENTERS.m_mult
 		return { vars = { card.ability.extra.repetitions } }
 	end,
+	attributes = { 'retrigger', 'enhancements' },
 	-- gates it behind mult or bonus cards
 	in_pool = function(self, args)
 		if G.deck and G.deck.cards then
@@ -2329,6 +2401,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.mult, card.ability.extra.mult_gain, localize((G.GAME.current_round.znm_liontamer_rank or {}).rank or 'Ace', 'ranks') } }
 	end,
+
+	attributes = { 'mult', 'scaling', 'boss_blind', 'rank' },
 
 	-- checks if the player played the correct rank, and then adds mult
 	calculate = function(self, card, context)
@@ -2447,7 +2521,7 @@ SMODS.Joker {
 	end,
 
 
-
+	attributes = { 'copying', 'hands' },
 
 
 	calculate = function(self, card, context)
@@ -2534,6 +2608,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult, localize(suit, 'suits_singular'), colours = { G.C.SUITS[suit] } } }
 	end,
 
+	attributes = { 'mult', 'suit' },
+
 
 	calculate = function(self, card, context)
 		-- checks before the hand is scored
@@ -2614,7 +2690,7 @@ SMODS.Joker {
 		return { vars = {} }
 	end,
 
-
+	attributes = { 'destroy_card', 'editions' },
 
 	calculate = function(self, card, context)
 		if context.before and context.main_eval and G.consumeables.cards[1] then
@@ -2700,6 +2776,7 @@ SMODS.Joker {
 		end
 	end,
 
+	attributes = { 'generation', 'spectral', 'enhancements', 'destroy_card' },
 
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play and
@@ -2780,7 +2857,7 @@ SMODS.Joker {
 		return { vars = { numerator, denominator, } }
 	end,
 
-
+	attributes = { 'chance', 'seals', 'face', 'modify_card' },
 
 	calculate = function(self, card, context)
 		if context.individual and context.end_of_round and context.cardarea == G.hand then
@@ -2839,6 +2916,7 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.dollars, math.max(card.ability.extra.dollars * ((G.jokers and #G.jokers.cards or 0) + card.ability.extra.hasshrimped), 0) } }
 	end,
 
+	attributes = { 'economy', 'joker', 'destroy_card' },
 
 	-- abstract joker esque calculation
 	calc_dollar_bonus = function(self, card)
@@ -2923,6 +3001,7 @@ SMODS.Joker {
 		Food = true
 	},
 
+	attributes = { 'generation', 'destroy_card', 'food' },
 
 	calculate = function(self, card, context)
 		local znm_blueberryduplicatelist = {}
@@ -3064,7 +3143,7 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.fountain_threshold } }
 	end,
 
-
+	attributes = { 'generation', 'joker', 'editions' },
 
 	calculate = function(self, card, context)
 		if context.setting_blind and not context.blueprint and #G.jokers.cards + G.GAME.joker_buffer < G.jokers.config.card_limit + 1 then
@@ -3113,7 +3192,7 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.max } }
 	end,
 
-
+	attributes = { 'economy', 'skip' },
 
 	calculate = function(self, card, context)
 		if context.skip_blind then
@@ -3167,7 +3246,7 @@ SMODS.Joker {
 	end,
 	-- this is in case it's sold while it's active so it correctly divides the probabilities
 
-
+	attributes = { 'mod_chance', 'rank', 'ace' },
 
 	calculate = function(self, card, context)
 		-- makes sure you can't activate it twice because ummm oops! all sixes
@@ -3237,6 +3316,8 @@ SMODS.Joker {
 					0) }
 		}
 	end,
+
+	attributes = { 'economy', 'discard', 'rank', 'three', 'six', 'nine' },
 
 	calc_dollar_bonus = function(self, card)
 		local threetally = 0
@@ -3311,7 +3392,7 @@ SMODS.Joker {
 		info_queue[#info_queue + 1] = G.P_CENTERS.e_polychrome
 	end,
 
-
+	attributes = { 'modify_card', 'editions', 'enhancements', 'suit', 'diamonds' },
 
 	calculate = function(self, card, context)
 		if context.setting_ability and context.old and not context.unchanged and G.P_CENTERS[context.new].set == 'Enhanced' and not context.blueprint then
@@ -3366,7 +3447,7 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.xmult, card.ability.extra.xmult_gain } }
 	end,
 
-
+	attributes = { 'xmult', 'scaling', 'joker', 'on_sell' },
 
 	calculate = function(self, card, context)
 		-- this context is pretty much identical to verdant leaf funny enough
@@ -3415,7 +3496,7 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.xmult, card.ability.extra.xmult_gain } }
 	end,
 
-
+	attributes = { 'xmult', 'hand_type' },
 
 	calculate = function(self, card, context)
 		if context.joker_main then
@@ -3458,6 +3539,8 @@ SMODS.Joker {
 		info_queue[#info_queue + 1] = G.P_CENTERS.m_wild
 		return { vars = { card.ability.extra.hands, card.ability.extra.wildreq } }
 	end,
+
+	attributes = { 'hands', 'discard', 'enhancements' },
 
 	in_pool = function(self, args) -- gating it silly style
 		for _, playing_card in ipairs(G.playing_cards or {}) do
@@ -3534,7 +3617,7 @@ SMODS.Joker {
 		end
 	end,
 
-
+	attributes = { 'xmult', 'sell_value', 'joker' },
 
 	calculate = function(self, card, context)
 		if context.before and context.main_eval and not context.blueprint then
@@ -3582,7 +3665,7 @@ SMODS.Joker {
 		return { vars = { numerator, denominator, } }
 	end,
 
-
+	attributes = { 'modify_card', 'rank', 'discard', 'chance' },
 
 	calculate = function(self, card, context)
 		if context.discard and SMODS.pseudorandom_probability(card, 'znm_ferrets', card.ability.extra.numerator, card.ability.extra.denominator, 'znm_ferrets') then
@@ -3637,7 +3720,7 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.dollars, (G.GAME.current_round.znm_combinationlocknumA or 2), (G.GAME.current_round.znm_combinationlocknumB or 3) } }
 	end,
 
-
+	attributes = { 'economy', 'rank' },
 
 	calculate = function(self, card, context)
 		local nomnum = 0
@@ -3722,7 +3805,7 @@ SMODS.Joker {
 		return { vars = { localize(ob_card.rank, 'ranks'), localize(ob_card.suit, 'suits_plural'), colours = { G.C.SUITS[ob_card.suit] } } }
 	end,
 
-
+	attributes = { 'hands', 'seals', 'rank', 'suit', 'modify_card' },
 
 	calculate = function(self, card, context)
 		if context.before and context.main_eval and #context.full_hand == 1 and not context.blueprint and context.full_hand[1]:get_id() == G.GAME.current_round.znm_ouijaboard_card.id and
@@ -3777,6 +3860,9 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.hands, card.ability.extra.xmult_gain } }
 	end,
+
+	attributes = { 'hands' },
+
 	add_to_deck = function(self, card, from_debuff)
 		if not G.GAME.modifiers.no_interest then
 			G.GAME.modifiers.no_interest = true
@@ -3843,6 +3929,7 @@ SMODS.Joker {
 		end
 		return { vars = { card.ability.extra.mult_gain, ((card.ability.extra.mult_gain * lucky_tally) or 0) } }
 	end,
+	attributes = { 'mult', 'scaling', 'enhancements', 'full_deck' },
 	in_pool = function(self, args) -- makes sure it won't appear if you have 0 lucky cards
 		for _, playing_card in ipairs(G.playing_cards or {}) do
 			if SMODS.has_enhancement(playing_card, 'm_lucky') then
@@ -3899,6 +3986,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.discardcost, card.ability.extra.discardsgained } }
 	end,
+
+	attributes = { 'discard' },
 
 	add_to_deck = function(self, card, from_debuff)
 		G.GAME.round_resets.discards = G.GAME.round_resets.discards + card.ability.extra.discardsgained
@@ -3966,6 +4055,7 @@ SMODS.Joker {
 		Food = true
 	},
 
+	attributes = { 'joker', 'editions', 'food' },
 
 	calculate = function(self, card, context)
 		if context.setting_blind and not context.blueprint then
@@ -4080,6 +4170,7 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.mult, card.ability.extra.multactive, card.ability.extra.multinactive, } }
 	end,
+	attributes = { 'mult' },
 	-- taken from CCC
 	afterload = function(self, card, card_table, other_card)
 		card.children.center:set_sprite_pos(card_table.ability.extra.pos_override)
@@ -4174,6 +4265,8 @@ SMODS.Joker {
 		return { vars = {} }
 	end,
 
+	attributes = { 'generation', 'tarot', 'joker', 'on_sell' },
+
 
 	calculate = function(self, card, context)
 		if context.selling_card and context.card.ability.set == 'Joker' and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit and context.card ~= card then
@@ -4237,6 +4330,8 @@ SMODS.Joker {
 		}
 	end,
 
+	attributes = { 'xmult', 'hand_type' },
+
 
 	calculate = function(self, card, context)
 		if context.joker_main then
@@ -4284,6 +4379,7 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult, card.ability.extra.mult_gain } }
 	end,
 
+	attributes = { 'mult', 'scaling', 'hand_type', 'space' },
 
 	calculate = function(self, card, context)
 		-- this code is pretty much identical to obelisk, funny enough i didnt realize how similarly this functioned although i think it plays differently enough that it's fine
@@ -4343,6 +4439,7 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult } }
 	end,
 
+	attributes = { 'mult', 'suit' },
 
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play then
@@ -4419,6 +4516,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult, numerator, denominator, } }
 	end,
 
+	attributes = { 'mult', 'chance', 'destroy_card', 'rank', 'six', 'seven', 'eight', 'nine' },
+
 	calculate = function(self, card, context)
 		local znm_canyondestroylist = {}
 		if context.individual and context.cardarea == G.play then
@@ -4483,6 +4582,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult, card.ability.extra.chips, card.ability.extra.maxtimes } }
 	end,
 
+	attributes = { 'chips', 'mult', 'hand_type' },
+
 	calculate = function(self, card, context)
 		-- looking at that obelisk again :eyes:
 
@@ -4539,6 +4640,8 @@ SMODS.Joker {
 	pools = {
 		Food = true
 	},
+
+	attributes = { 'discard', 'food', 'scaling' },
 
 	add_to_deck = function(self, card, from_debuff)
 		G.E_MANAGER:add_event(Event({
@@ -4646,6 +4749,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.xmult } }
 	end,
 
+	attributes = { 'xmult' },
+
 	calculate = function(self, card, context)
 		if context.buying_card and context.card.ability.set == 'Voucher' and not context.blueprint then
 			G.E_MANAGER:add_event(Event({
@@ -4714,6 +4819,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.xmult, card.ability.extra.evilxmult, localize((G.GAME.current_round.znm_minesweeper_rank or {}).rank or 'Ace', 'ranks') } }
 	end,
+
+	attributes = { 'xmult', 'rank' },
 
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play then
@@ -4809,6 +4916,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult } }
 	end,
 
+	attributes = { 'mult', 'rank', 'seven', 'four' },
+
 	calculate = function(self, card, context)
 		if context.joker_main then
 			return {
@@ -4882,6 +4991,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.mult, card.ability.extra.morethan } }
 	end,
+
+	attributes = { 'mult', 'rank', 'full_deck' },
 
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play then
@@ -4965,6 +5076,8 @@ SMODS.Joker {
 		end
 	end,
 
+	attributes = { 'xmult', 'scaling', 'discard', 'suit', 'reset' },
+
 	calculate = function(self, card, context)
 		if context.pre_discard then
 			local suit_tally = 0
@@ -5044,6 +5157,7 @@ SMODS.Joker {
 		info_queue[#info_queue + 1] = G.P_CENTERS.m_bonus
 		return { vars = { card.ability.extra.permamoney } }
 	end,
+	attributes = { 'economy', 'modify_card', 'perma_bonus', 'enhancements' },
 	in_pool = function(self, args)
 		if G.deck and G.deck.cards then
 			for j = 1, #G.deck.cards do
@@ -5108,6 +5222,8 @@ SMODS.Joker {
 			return { vars = { card.ability.extra.chips, 0 } }
 		end
 	end,
+	
+	attributes = { 'chips', 'joker' },
 
 	calculate = function(self, card, context)
 		if context.joker_main then
@@ -5154,6 +5270,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.mult, } }
 	end,
 
+	attributes = { 'mult', 'hand_type' },
+
 	calculate = function(self, card, context)
 		if context.joker_main and (G.GAME.hands[context.scoring_name].played % 2) == 0 then
 			return {
@@ -5196,6 +5314,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.rounds, card.ability.extra.roundstotal, card.ability.extra.Xmult, } }
 	end,
+
+	attributes = { 'xmult', 'modify_card', 'perma_bonus', 'discard', 'food' },
 
 	calculate = function(self, card, context)
 		if context.discard then
@@ -5283,6 +5403,8 @@ SMODS.Joker {
 		return { vars = { card.ability.extra.chips, card.ability.extra.chip_gain, localize(suit, 'suits_singular'), colours = { G.C.SUITS[suit] } } }
 	end,
 
+	attributes = { 'chips', 'scaling', 'suit', 'reset' },
+
 	calculate = function(self, card, context)
 		if context.before and context.main_eval and not context.blueprint then
 			card.ability.extra.chairbool = false
@@ -5365,6 +5487,8 @@ SMODS.Joker {
 		return { vars = { numerator, denominator, } }
 	end,
 
+	attributes = { 'generation', 'chance', 'rank', 'king', 'queen' },
+
 	calculate = function(self, card, context)
 		if context.before and context.main_eval then
 			local znm_alienduplicatelist = {}
@@ -5435,6 +5559,8 @@ SMODS.Joker {
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.repetitions } }
 	end,
+
+	attributes = { 'retrigger' },
 
 	calculate = function(self, card, context)
 		local dollars = G.GAME.dollars
@@ -5519,7 +5645,7 @@ SMODS.Joker {
 		return { vars = { (card.ability.extra.xmult or 1), (card.ability.extra.xmult_gain or 0.1) } }
 	end,
 
-
+	attributes = { 'xmult', 'scaling', 'joker' },
 
 	calculate = function(self, card, context)
 		if context.post_trigger
