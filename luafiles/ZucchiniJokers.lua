@@ -2617,12 +2617,12 @@ SMODS.Joker {
 
 
 	calculate = function(self, card, context)
-		local znm_shamanlist = {}
-		local znm_shamancard = {}
-		local znm_shamanedition = poll_edition('znm_shaman', nil, true, true,
-			{ 'e_polychrome', 'e_holo', 'e_foil' })
-		local znm_canshaman = false
 		if context.before and context.main_eval and G.consumeables.cards[1] then
+			local znm_shamanlist = {}
+			local znm_shamancard = {}
+			local znm_shamanedition = poll_edition('znm_shaman', nil, true, true,
+				{ 'e_polychrome', 'e_holo', 'e_foil' })
+			local znm_canshaman = false
 			for i = 1, #context.scoring_hand do
 				if context.scoring_hand[i] and not context.scoring_hand[i].edition and not context.scoring_hand[i].debuff then
 					znm_shamanlist[#znm_shamanlist + 1] =
