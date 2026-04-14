@@ -85,11 +85,18 @@ SMODS.Joker {
 		end
 		-- lower sell value and say EW! or something
 		if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
-			card.ability.extra_value = card.ability.extra_value - card.ability.extra.price
+			SMODS.scale_card(card, {
+				ref_table = card.ability,
+				ref_value = 'extra_value',
+				scalar_table = card.ability.extra,
+				scalar_value = 'price',
+				operation = '-',
+				scaling_message = {
+					message = "Yuck!",
+				},
+			})
 			card:set_cost()
-			return {
-				message = "Yuck!",
-			}
+			return nil, true
 		end
 	end
 }
@@ -188,11 +195,13 @@ SMODS.Joker {
 	calculate = function(self, card, context)
 		-- function that adds chips
 		if context.using_consumeable and not context.blueprint and context.consumeable.ability.set == 'Tarot' and G.GAME.blind.in_blind then
-			card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_gain
-			return {
-				message = localize('k_upgrade_ex'),
-				colour = G.C.CHIPS,
-			}
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'chips',
+				scalar_value = 'chip_gain',
+				message_colour = G.C.CHIPS
+			})
+			return nil, true
 		end
 		-- scoring
 		if context.joker_main then
@@ -259,28 +268,7 @@ SMODS.Joker {
 			ease_dollars(-G.GAME.dollars, true)
 
 			-- This part plays the animation.
-			G.E_MANAGER:add_event(Event({
-				func = function()
-					play_sound('tarot1')
-					card.T.r = -0.2
-					card:juice_up(0.3, 0.4)
-					card.states.drag.is = true
-					card.children.center.pinch.x = true
-					-- This part destroys the card.
-					G.E_MANAGER:add_event(Event({
-						trigger = 'after',
-						delay = 0.3,
-						blockable = false,
-						func = function()
-							G.jokers:remove_card(card)
-							card:remove()
-							card = nil
-							return true;
-						end
-					}))
-					return true
-				end
-			}))
+			SMODS.destroy_cards(card, nil, nil, true)
 			return {
 				message = "Caught!",
 			}
@@ -597,15 +585,13 @@ SMODS.Joker {
 		end
 		-- thanks somethingcom515 for the context here
 		if context.individual and context.end_of_round and context.cardarea == G.hand and SMODS.has_enhancement(context.other_card, "m_gold") and not context.blueprint then
-			card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_gain
-			return {
-				-- card eval whatever whatever makes it so it displays the upgrade text on the joker (card) instead of the individual gold cards
-				card_eval_status_text(card, 'extra', nil, nil, nil, {
-					message = localize('k_upgrade_ex'),
-					colour = G.C.MONEY
-				}),
-
-			}
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'mult',
+				scalar_value = 'mult_gain',
+				message_colour = G.C.MONEY,
+			})
+			return nil, true
 		end
 	end
 
@@ -652,11 +638,13 @@ SMODS.Joker {
 		end
 		-- scale on playing a full house
 		if context.before and context.main_eval and not context.blueprint and (next(context.poker_hands['Full House'])) then
-			card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
-			return {
-				message = localize('k_upgrade_ex'),
-				colour = G.C.RED
-			}
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'Xmult',
+				scalar_value = 'Xmult_gain',
+				message_colour = G.C.MULT
+			})
+			return nil, true
 		end
 		-- reset sometimes! get scared
 		if context.before and context.main_eval and not context.blueprint and context.scoring_name == 'High Card' then
@@ -887,10 +875,13 @@ SMODS.Joker {
 					if G.GAME.modifiers.znm_evilreef then
 						ease_dollars(-G.GAME.dollars, true)
 					end
-					card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_gain
-					return {
-						message = localize('k_upgrade_ex'),
-					}
+					SMODS.scale_card(card, {
+						ref_table = card.ability.extra,
+						ref_value = 'mult',
+						scalar_value = 'mult_gain',
+						message_colour = G.C.MULT
+					})
+					return nil, true
 				end
 			end
 		end
@@ -1027,28 +1018,7 @@ SMODS.Joker {
 			end
 			-- invisible joker esque code that gives text for 1 round left, and destroys itself alongside text at 0
 			if card.ability.extra.invis_rounds == 0 then
-				G.E_MANAGER:add_event(Event({
-					func = function()
-						play_sound('tarot1')
-						card.T.r = -0.2
-						card:juice_up(0.3, 0.4)
-						card.states.drag.is = true
-						card.children.center.pinch.x = true
-						-- This part destroys the card.
-						G.E_MANAGER:add_event(Event({
-							trigger = 'after',
-							delay = 0.3,
-							blockable = false,
-							func = function()
-								G.jokers:remove_card(card)
-								card:remove()
-								card = nil
-								return true;
-							end
-						}))
-						return true
-					end
-				}))
+				SMODS.destroy_cards(card, nil, nil, true)
 				return {
 					message = "Yum yum yum!",
 					colour = G.C.DARK_EDITION
@@ -1099,28 +1069,7 @@ SMODS.Joker {
 		end
 		--rerolling takes this away
 		if context.reroll_shop and not context.blueprint then
-			G.E_MANAGER:add_event(Event({
-				func = function()
-					play_sound('tarot1')
-					card.T.r = -0.2
-					card:juice_up(0.3, 0.4)
-					card.states.drag.is = true
-					card.children.center.pinch.x = true
-					-- This part destroys the card.
-					G.E_MANAGER:add_event(Event({
-						trigger = 'after',
-						delay = 0.3,
-						blockable = false,
-						func = function()
-							G.jokers:remove_card(card)
-							card:remove()
-							card = nil
-							return true;
-						end
-					}))
-					return true
-				end
-			}))
+			SMODS.destroy_cards(card, nil, nil, true)
 			return {
 				message = "Goodbye!",
 			}
@@ -1382,13 +1331,14 @@ SMODS.Joker {
 			}
 		end
 		if context.discard and not context.blueprint and not context.other_card.debuff and context.other_card:is_face() then
-			card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_gain
-			return {
-				delay = 0.3,
-				message = localize('k_upgrade_ex'),
-				card = card,
-				colour = G.C.MULT
-			}
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'mult',
+				scalar_value = 'mult_gain',
+				message_colour = G.C.MULT,
+				message_delay = 0.3,
+			})
+			return nil, true
 		end
 		if context.end_of_round and context.main_eval then
 			card.ability.extra.mult = 0
@@ -1589,11 +1539,13 @@ SMODS.Joker {
 
 	calculate = function(self, card, context)
 		if context.setting_blind and to_big(G.GAME.dollars) < to_big(G.GAME.interest_cap) and not context.blueprint then
-			card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_gain
-			return {
-				message = localize('k_upgrade_ex'),
-				colour = G.C.RED
-			}
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'mult',
+				scalar_value = 'mult_gain',
+				message_colour = G.C.MULT,
+			})
+			return nil, true
 		end
 
 		if context.joker_main then
@@ -1710,11 +1662,13 @@ SMODS.Joker {
 		if context.pre_discard and not context.blueprint and not context.hook then
 			local _, _, znm_candle_check, _ = G.FUNCS.get_poker_hand_info(G.hand.highlighted)
 			if next(znm_candle_check[card.ability.extra.candle_hand]) or next(znm_candle_check[card.ability.extra.candle_hand2]) then
-				card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
-				return {
-					message = localize('k_upgrade_ex'),
-					colour = G.C.RED
-				}
+				SMODS.scale_card(card, {
+					ref_table = card.ability.extra,
+					ref_value = 'Xmult',
+					scalar_value = 'Xmult_gain',
+					message_colour = G.C.MULT,
+				})
+				return nil, true
 			end
 		end
 
@@ -1739,7 +1693,7 @@ SMODS.Joker {
 		name = 'Aw Shucks!',
 		text = {
 			'{C:attention}+#1#{} consumable #2#',
-			'{C:attention}-1{} consumable slot per round played',
+			'{C:attention}-#3#{} consumable slot per round played',
 			'{C:green,s:0.8}Art by NoahCrawfish{}'
 
 
@@ -1754,7 +1708,7 @@ SMODS.Joker {
 	-- Cost of card in shop.
 	cost = 6,
 	-- put all variables in here
-	config = { extra = { consumables_limit = 5 } },
+	config = { extra = { consumables_limit = 5, mod = 1 } },
 
 	loc_vars = function(self, info_queue, card)
 		local shucksleft
@@ -1764,7 +1718,7 @@ SMODS.Joker {
 			shucksleft = 'slot'
 		end
 		return {
-			vars = { card.ability.extra.consumables_limit, shucksleft }
+			vars = { card.ability.extra.consumables_limit, shucksleft, card.ability.extra.mod }
 		}
 	end,
 	--for use with stuff like paperback's jokers that depend on food jokers
@@ -1794,46 +1748,25 @@ SMODS.Joker {
 	end,
 	calculate = function(self, card, context)
 		if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
-			card.ability.extra.consumables_limit = card.ability.extra.consumables_limit - 1
-			G.E_MANAGER:add_event(Event({
-				func = function()
-					G.consumeables.config.card_limit = G.consumeables.config.card_limit - 1
-					return true
-				end
-			}))
-
-			if card.ability.extra.consumables_limit == 0 then
-				G.E_MANAGER:add_event(Event({
-					func = function()
-						play_sound('tarot1')
-						card.T.r = -0.2
-						card:juice_up(0.3, 0.4)
-						card.states.drag.is = true
-						card.children.center.pinch.x = true
-						-- This part destroys the card.
-						G.E_MANAGER:add_event(Event({
-							trigger = 'after',
-							delay = 0.3,
-							blockable = false,
-							func = function()
-								G.jokers:remove_card(card)
-								card:remove()
-								card = nil
-								return true;
-							end
-						}))
-						return true
-					end
-				}))
+			if (card.ability.extra.consumables_limit - card.ability.extra.mod) <= 0 then
+				SMODS.destroy_cards(card, nil, nil, true)
 				return {
 					message = "Eaten!",
 					colour = G.C.ATTENTION
 				}
+			else
+				SMODS.scale_card(card, {
+					ref_table = card.ability.extra,
+					ref_value = 'consumables_limit',
+					scalar_value = 'mod',
+					operation = function(ref_table, ref_value, initial, change)
+						ref_table[ref_value] = initial - change
+						G.consumeables.config.card_limit = G.consumeables.config.card_limit - change
+					end,
+					message_key = 'a_chips_minus', -- generic scaling message
+				})
+				return nil, true
 			end
-			return {
-				message = "-1",
-				colour = G.C.ATTENTION
-			}
 		end
 	end
 
@@ -2408,9 +2341,16 @@ SMODS.Joker {
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play and not context.blueprint and G.GAME.blind.boss then
 			if context.other_card:get_id() == G.GAME.current_round.znm_liontamer_rank.id then
-				card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_gain
+				SMODS.scale_card(card, {
+					ref_table = card.ability.extra,
+					ref_value = 'mult',
+					scalar_value = 'mult_gain',
+					no_message = true, -- when upgrading on a card, message timing is thrown off if we do the message in scale_card
+				})
 				return {
 					message = localize('k_upgrade_ex'),
+					colour = G.C.MULT,
+					message_card = card,
 				}
 			end
 		end
@@ -3029,28 +2969,7 @@ SMODS.Joker {
 				}
 			end
 			if card.ability.extra.rounds == 0 then
-				G.E_MANAGER:add_event(Event({
-					func = function()
-						play_sound('tarot1')
-						card.T.r = -0.2
-						card:juice_up(0.3, 0.4)
-						card.states.drag.is = true
-						card.children.center.pinch.x = true
-						-- This part destroys the card.
-						G.E_MANAGER:add_event(Event({
-							trigger = 'after',
-							delay = 0.3,
-							blockable = false,
-							func = function()
-								G.jokers:remove_card(card)
-								card:remove()
-								card = nil
-								return true;
-							end
-						}))
-						return true
-					end
-				}))
+				SMODS.destroy_cards(card, nil, nil, true)
 				return {
 					message = "Eaten!",
 					colour = G.C.BLUE
@@ -3277,6 +3196,7 @@ SMODS.Joker {
 	end
 }
 -- THREES MCGEE
+-- gonna be real i'm rewriting this one so that it works with scale_card better -vitellary
 SMODS.Joker {
 	key = 'threemcgee',
 	blueprint_compat = false,
@@ -3289,7 +3209,7 @@ SMODS.Joker {
 			'At end of round,',
 			'{C:money}$#1#{} for every discarded {C:attention}3{}, {C:attention}6{} or {C:attention}9{} this round,',
 			'{C:red}-$#2#{} for every scored {C:attention}3{}, {C:attention}6{} or {C:attention}9{} this round',
-			'{C:inactive}(Currently {C:money}$#5#{C:inactive}){}',
+			'{C:inactive}(Currently {C:money}$#3#{C:inactive}){}',
 			'{C:green,s:0.8}Art and Concept by gooseberry{}'
 
 		}
@@ -3303,57 +3223,48 @@ SMODS.Joker {
 	-- Cost of card in shop.
 	cost = 5,
 	-- put all variables in here
-	config = { extra = { td = 1, tp = 2, threediscards = 0, threeplays = 0, dollars = 1 } },
+	config = { extra = { td = 1, tp = 2, dollars = 0 } },
 
 	loc_vars = function(self, info_queue, card)
-		return {
-			vars = { card.ability.extra.td, card.ability.extra.tp, card.ability.extra.threediscards, card.ability.extra
-				.threeplays,
-
-				math.max(
-					card.ability.extra.dollars *
-					((card.ability.extra.threediscards * card.ability.extra.td) - (card.ability.extra.threeplays * card.ability.extra.tp)),
-					0) }
-		}
+		return { vars = { card.ability.extra.td, card.ability.extra.tp, math.max(card.ability.extra.dollars, 0) } }
 	end,
 
 	attributes = { 'economy', 'discard', 'rank', 'three', 'six', 'nine' },
 
 	calc_dollar_bonus = function(self, card)
-		local threetally = 0
-		threetally = (card.ability.extra.threediscards * card.ability.extra.td) -
-			(card.ability.extra.threeplays * card.ability.extra.tp)
-
-		return threetally > 0 and threetally or nil
+		if card.ability.extra.dollars > 0 then
+			return card.ability.extra.dollars
+		end
 	end,
 
 	calculate = function(self, card, context)
 		if context.discard and not context.blueprint and not context.other_card.debuff and
-			(context.other_card:get_id() == (3) or context.other_card:get_id() == (6) or context.other_card:get_id() == (9)) then
-			card.ability.extra.threediscards = card.ability.extra.threediscards + 1
+		(context.other_card:get_id() == (3) or context.other_card:get_id() == (6) or context.other_card:get_id() == (9)) then
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'dollars',
+				scalar_value = 'td',
+			})
+			return nil, true
+		end
+
+		if context.individual and context.cardarea == G.play and not context.blueprint and
+		((context.other_card:get_id() == 3) or (context.other_card:get_id() == 6) or (context.other_card:get_id() == 9)) then
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'dollars',
+				scalar_value = 'tp',
+				operation = '-',
+				no_message = true, -- when upgrading on a card, message timing is thrown off if we do the message in scale_card
+			})
 			return {
-				card_eval_status_text(card, 'extra', nil, nil, nil, {
-					message = localize('k_upgrade_ex'),
-					colour = G.C.ATTENTION
-				}),
+				message = 'Downgrade!',
+				colour = G.C.RED,
+				message_card = card,
 			}
 		end
-
-		if context.individual and context.cardarea == G.play and not context.blueprint then
-			if (context.other_card:get_id() == 3) or (context.other_card:get_id() == 6) or (context.other_card:get_id() == 9) then
-				card.ability.extra.threeplays = card.ability.extra.threeplays + 1
-
-				return {
-					card_eval_status_text(card, 'extra', nil, nil, nil, {
-						message = 'Downgrade!',
-						colour = G.C.RED
-					}),
-				}
-			end
-		end
 		if context.starting_shop then
-			card.ability.extra.threediscards = 0
-			card.ability.extra.threeplays = 0
+			card.ability.extra.dollars = 0
 		end
 	end
 }
@@ -3452,11 +3363,13 @@ SMODS.Joker {
 	calculate = function(self, card, context)
 		-- this context is pretty much identical to verdant leaf funny enough
 		if context.selling_card and context.card.ability.set == 'Joker' and not context.blueprint and G.GAME.blind.in_blind then
-			card.ability.extra.xmult = card.ability.extra.xmult + card.ability.extra.xmult_gain
-			return {
-				message = localize('k_upgrade_ex'),
-				colour = G.C.RED
-			}
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'xmult',
+				scalar_value = 'xmult_gain',
+				message_colour = G.C.MULT,
+			})
+			return nil, true
 		end
 
 		if context.joker_main then
@@ -4102,28 +4015,7 @@ SMODS.Joker {
 
 
 			if card.ability.extra.rounds_remaining == 0 then
-				G.E_MANAGER:add_event(Event({
-					func = function()
-						play_sound('tarot1')
-						card.T.r = -0.2
-						card:juice_up(0.3, 0.4)
-						card.states.drag.is = true
-						card.children.center.pinch.x = true
-						-- This part destroys the card.
-						G.E_MANAGER:add_event(Event({
-							trigger = 'after',
-							delay = 0.3,
-							blockable = false,
-							func = function()
-								G.jokers:remove_card(card)
-								card:remove()
-								card = nil
-								return true;
-							end
-						}))
-						return true
-					end
-				}))
+				SMODS.destroy_cards(card, nil, nil, true)
 				return {
 					message = "Drank!",
 					colour = G.C.EDITION
@@ -4393,11 +4285,13 @@ SMODS.Joker {
 				end
 			end
 			if not reset then
-				card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_gain
-				return {
-					message = localize('k_upgrade_ex'),
-					colour = G.C.RED,
-				}
+				SMODS.scale_card(card, {
+					ref_table = card.ability.extra,
+					ref_value = 'mult',
+					scalar_value = 'mult_gain',
+					message_colour = G.C.MULT,
+				})
+				return nil, true
 			end
 		end
 
@@ -4611,7 +4505,7 @@ SMODS.Joker {
 			'{C:red}+#1#{} #2#',
 			'each round,',
 			'Reduces by',
-			'{C:red}1{} every round'
+			'{C:red}#3#{} every round'
 		}
 	},
 	rarity = 1,
@@ -4623,7 +4517,7 @@ SMODS.Joker {
 	-- Cost of card in shop.
 	cost = 4,
 	-- put all variables in here
-	config = { extra = { discards = 3 } },
+	config = { extra = { discards = 3, mod = 1 } },
 
 	loc_vars = function(self, info_queue, card)
 		local discardsleft
@@ -4633,7 +4527,7 @@ SMODS.Joker {
 			discardsleft = 'discard'
 		end
 		return {
-			vars = { card.ability.extra.discards, discardsleft }
+			vars = { card.ability.extra.discards, discardsleft, card.ability.extra.mod }
 		}
 	end,
 	-- puts it in the food pool for specifically paperback but probably other stuff too
@@ -4667,49 +4561,27 @@ SMODS.Joker {
 	end,
 	calculate = function(self, card, context)
 		if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
-			if card.ability.extra.discards ~= 0 then
-				card.ability.extra.discards = card.ability.extra.discards - 1
-				G.GAME.round_resets.discards = G.GAME.round_resets.discards - 1
-			end
-			G.E_MANAGER:add_event(Event({
-				func = function()
-					ease_discard(-1)
-					return true
-				end
-			}))
-
-			if card.ability.extra.discards == 0 then
-				G.E_MANAGER:add_event(Event({
-					func = function()
-						play_sound('tarot1')
-						card.T.r = -0.2
-						card:juice_up(0.3, 0.4)
-						card.states.drag.is = true
-						card.children.center.pinch.x = true
-						-- This part destroys the card.
-						G.E_MANAGER:add_event(Event({
-							trigger = 'after',
-							delay = 0.3,
-							blockable = false,
-							func = function()
-								G.jokers:remove_card(card)
-								card:remove()
-								card = nil
-								return true;
-							end
-						}))
-						return true
-					end
-				}))
+			if (card.ability.extra.discards - card.ability.extra.mod) <= 0 then
+				SMODS.destroy_cards(card, nil, nil, true)
 				return {
 					message = "Drank!",
 					colour = G.C.RED
 				}
+			else
+				SMODS.scale_card(card, {
+					ref_table = card.ability.extra,
+					ref_value = 'discards',
+					scalar_value = 'mod',
+					operation = function(ref_table, ref_value, initial, change)
+						ref_table[ref_value] = initial - change
+						G.GAME.round_resets.discards = G.GAME.round_resets.discards - change
+						ease_discard(-change)
+					end,
+					message_key = 'a_chips_minus', -- generic scaling message
+					message_colour = G.C.RED,
+				})
+				return nil, true
 			end
-			return {
-				message = "-1",
-				colour = G.C.RED
-			}
 		end
 	end
 
@@ -4753,28 +4625,7 @@ SMODS.Joker {
 
 	calculate = function(self, card, context)
 		if context.buying_card and context.card.ability.set == 'Voucher' and not context.blueprint then
-			G.E_MANAGER:add_event(Event({
-				func = function()
-					play_sound('tarot1')
-					card.T.r = -0.2
-					card:juice_up(0.3, 0.4)
-					card.states.drag.is = true
-					card.children.center.pinch.x = true
-					-- This part destroys the card.
-					G.E_MANAGER:add_event(Event({
-						trigger = 'after',
-						delay = 0.3,
-						blockable = false,
-						func = function()
-							G.jokers:remove_card(card)
-							card:remove()
-							card = nil
-							return true;
-						end
-					}))
-					return true
-				end
-			}))
+			SMODS.destroy_cards(card, nil, nil, true)
 			return {
 				message = "!!",
 			}
@@ -4930,28 +4781,7 @@ SMODS.Joker {
 		end
 		if context.after and context.main_eval and not context.blueprint and card.ability.extra.goodbye then
 			-- This part plays the animation.
-			G.E_MANAGER:add_event(Event({
-				func = function()
-					play_sound('tarot1')
-					card.T.r = -0.2
-					card:juice_up(0.3, 0.4)
-					card.states.drag.is = true
-					card.children.center.pinch.x = true
-					-- This part destroys the card.
-					G.E_MANAGER:add_event(Event({
-						trigger = 'after',
-						delay = 0.3,
-						blockable = false,
-						func = function()
-							G.jokers:remove_card(card)
-							card:remove()
-							card = nil
-							return true;
-						end
-					}))
-					return true
-				end
-			}))
+			SMODS.destroy_cards(card, nil, nil, true)
 			return {
 				message = "Scared!",
 			}
@@ -5094,11 +4924,13 @@ SMODS.Joker {
 			end
 
 			if suit_tally == #context.full_hand then
-				card.ability.extra.xmult = card.ability.extra.xmult + card.ability.extra.xmult_gain
-				return {
-					message = localize('k_upgrade_ex'),
-					colour = G.C.RED
-				}
+				SMODS.scale_card(card, {
+					ref_table = card.ability.extra,
+					ref_value = 'xmult',
+					scalar_value = 'xmult_gain',
+					message_colour = G.C.MULT,
+				})
+				return nil, true
 			else
 				card.ability.extra.xmult = 1
 				return {
@@ -5332,28 +5164,7 @@ SMODS.Joker {
 		if context.end_of_round and context.game_over == false and context.main_eval and not context.blueprint then
 			card.ability.extra.rounds = card.ability.extra.rounds - 1
 			if card.ability.extra.rounds == 0 then
-				G.E_MANAGER:add_event(Event({
-					func = function()
-						play_sound('tarot1')
-						card.T.r = -0.2
-						card:juice_up(0.3, 0.4)
-						card.states.drag.is = true
-						card.children.center.pinch.x = true
-						-- This part destroys the card.
-						G.E_MANAGER:add_event(Event({
-							trigger = 'after',
-							delay = 0.3,
-							blockable = false,
-							func = function()
-								G.jokers:remove_card(card)
-								card:remove()
-								card = nil
-								return true;
-							end
-						}))
-						return true
-					end
-				}))
+				SMODS.destroy_cards(card, nil, nil, true)
 				return {
 					message = "Eaten!",
 					colour = G.C.RED
@@ -5418,11 +5229,13 @@ SMODS.Joker {
 						message = localize('k_reset')
 					}
 				else
-					card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_gain
-					return {
-						message = localize('k_upgrade_ex'),
-						colour = G.C.CHIPS,
-					}
+					SMODS.scale_card(card, {
+						ref_table = card.ability.extra,
+						ref_value = 'chips',
+						scalar_value = 'chip_gain',
+						message_colour = G.C.CHIPS,
+					})
+					return nil, true
 				end
 			end
 		end
@@ -5648,18 +5461,14 @@ SMODS.Joker {
 	attributes = { 'xmult', 'scaling', 'joker' },
 
 	calculate = function(self, card, context)
-		if context.post_trigger
-			and context.other_card.area == G.jokers and context.other_card == G.jokers.cards[1] and context.other_card ~= card and not context.blueprint then
-			card.ability.extra.xmult = card.ability.extra.xmult + card.ability.extra.xmult_gain
-
-			return {
-
-				card_eval_status_text(card, 'extra', nil, nil, nil, {
-					message = localize('k_upgrade_ex'),
-					colour = G.C.MULT
-				}),
-
-			}
+		if context.post_trigger and context.other_card.area == G.jokers and context.other_card == G.jokers.cards[1] and context.other_card ~= card and not context.blueprint then
+			SMODS.scale_card(card, {
+				ref_table = card.ability.extra,
+				ref_value = 'xmult',
+				scalar_value = 'xmult_gain',
+				message_colour = G.C.MULT,
+			})
+			return nil, true
 		end
 		if context.joker_main then
 			return {
